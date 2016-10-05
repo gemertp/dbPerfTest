@@ -1,0 +1,30 @@
+<?php
+
+ini_set('memory_limit','512M' );
+
+$db = new PDO('mysql:host=localhost;dbname=db_test;charset=utf8','dbtestuser','dbtestuser');
+
+$strSQL = "SELECT cat_code,sum(aantal) aantal ,sum(aantal*prijs) totaal  from db_perf_test group by cat_code order by cat_code;";
+$sth = $db->prepare($strSQL);
+$sth->execute();
+$sth->SetFetchMode(PDO::FETCH_ASSOC);
+$count=0;
+while ( $row = $sth->fetch() ) {
+	$cat_code = $row['cat_code'];
+	
+	if ( empty($aantal[$cat_code]) ) {
+		$aantal[$cat_code] = 0;
+		$totaal[$cat_code] = 0;
+	}
+	$aantal[$cat_code] += $row['aantal'];
+	$totaal[$cat_code] += $row['totaal'] ;
+
+}
+
+$keys = array_keys($aantal);
+foreach ( $keys as $key ) {
+	echo "$key \t ";
+	echo $totaal[$key] / $aantal[$key];
+	echo "\n";
+}
+?>

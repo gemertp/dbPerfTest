@@ -1,0 +1,19 @@
+<?php
+
+ini_set('memory_limit','512M' );
+
+$db = new PDO('mysql:host=localhost;dbname=db_test;charset=utf8','dbtestuser','dbtestuser');
+
+
+$strSQL = "SELECT cat_code, sum(aantal) aantal ,sum(aantal*prijs) totaal, (aantal*prijs)/aantal  gemiddeld from db_perf_test group by cat_code;";
+
+$sth = $db->prepare($strSQL);
+$sth->execute();
+$sth->SetFetchMode(PDO::FETCH_ASSOC);
+
+while ( $row = $sth->fetch() ) {
+	
+	echo "$row[cat_code] \t $row[gemiddeld]\n";
+	
+}
+?>
